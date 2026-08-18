@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RecordStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  records    Record[]
+  categories Category[]
+  tags       Tag[]
+
+  @@map("users")
+}
+
+model Category {
+  id     String   @id @default(cuid())
+  name   String
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  records Record[]
+
+  @@unique([userId, name])
+  @@map("categories")
+}
+
+model Tag {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  records RecordTag[]
+
+  @@unique([userId, name])
+  @@map("tags")
+}
+
+model Record {
+  id          String       @id @default(cuid())
+  title       String
+  author      String?
+  status      RecordStatus @default(NOT_STARTED)
+  rating      Int?
+  note        String?
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags       RecordTag[]
+
+  @@index([userId, status])
+  @@map("records")
+}
+
+model RecordTag {
+  recordId String
+  tagId    String
+  record   Record @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([recordId, tagId])
+  @@map("record_tags")
+}
