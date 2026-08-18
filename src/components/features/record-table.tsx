@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Circle, CircleCheck, CircleDashed } from "lucide-react";
 import type { RecordWithRelations } from "@/types/record";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,12 @@ const STATUS_VARIANT: Record<string, "outline" | "secondary" | "default"> = {
   COMPLETED: "default",
 };
 
+const STATUS_ICON: Record<string, typeof Circle> = {
+  NOT_STARTED: Circle,
+  IN_PROGRESS: CircleDashed,
+  COMPLETED: CircleCheck,
+};
+
 export function RecordTable({ records }: { records: RecordWithRelations[] }) {
   if (records.length === 0) {
     return (
@@ -38,14 +45,16 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
       <TableHeader>
         <TableRow>
           <TableHead>タイトル</TableHead>
-          <TableHead>ステータス</TableHead>
+          <TableHead className="text-center">ステータス</TableHead>
           <TableHead>カテゴリ</TableHead>
           <TableHead>タグ</TableHead>
           <TableHead className="text-right">操作</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {records.map((record) => (
+        {records.map((record) => {
+          const StatusIcon = STATUS_ICON[record.status];
+          return (
           <TableRow key={record.id}>
             <TableCell>
               <Link href={`/records/${record.id}/edit`} className="font-medium hover:underline">
@@ -55,8 +64,9 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
                 <p className="text-xs text-muted-foreground">{record.author}</p>
               )}
             </TableCell>
-            <TableCell>
+            <TableCell className="text-center">
               <Badge variant={STATUS_VARIANT[record.status]}>
+                <StatusIcon />
                 {STATUS_LABEL[record.status]}
               </Badge>
             </TableCell>
@@ -83,7 +93,8 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
               </div>
             </TableCell>
           </TableRow>
-        ))}
+          );
+        })}
       </TableBody>
     </Table>
   );

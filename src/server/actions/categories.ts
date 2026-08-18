@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { categorySchema } from "@/lib/validations/record";
+import { DEMO_ACCOUNT_MESSAGE, isDemoAccount } from "@/lib/demo";
 
 type ActionResult = { data: { id: string } | null; error: string | null };
 
@@ -13,6 +14,9 @@ export async function createCategoryAction(
   const session = await auth();
   if (!session?.user?.id) {
     return { data: null, error: "ログインが必要です" };
+  }
+  if (isDemoAccount(session.user.email)) {
+    return { data: null, error: DEMO_ACCOUNT_MESSAGE };
   }
 
   const parsed = categorySchema.safeParse({ name: formData.get("name") });

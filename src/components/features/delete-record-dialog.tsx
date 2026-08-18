@@ -25,7 +25,11 @@ export function DeleteRecordDialog({
 
   const handleDelete = () => {
     startTransition(async () => {
-      await deleteRecordAction(recordId);
+      const result = await deleteRecordAction(recordId);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success("記録を削除しました");
       setOpen(false);
     });

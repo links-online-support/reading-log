@@ -1,6 +1,7 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 import { AuthError } from "next-auth";
 import { db } from "@/lib/db";
 import { signIn } from "@/lib/auth";
@@ -31,13 +32,23 @@ export async function registerAction(
 
   const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
 
-  await db.user.create({
-    data: {
-      name: parsed.data.name,
-      email: parsed.data.email,
-      password: hashedPassword,
-    },
-  });
+  try {
+    await db.user.create({
+      data: {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        password: hashedPassword,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return { error: "このメールアドレスは既に登録されています" };
+    }
+    throw error;
+  }
 
   await signIn("credentials", {
     email: parsed.data.email,

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { recordSchema } from "@/lib/validations/record";
+import { DEMO_ACCOUNT_MESSAGE, isDemoAccount } from "@/lib/demo";
 
 type ActionState = { error: string | null };
 
@@ -47,6 +48,15 @@ function extractInput(formData: FormData) {
   });
 }
 
+async function assertOwnedCategory(userId: string, categoryId: string) {
+  if (!categoryId) return true;
+  const category = await db.category.findFirst({
+    where: { id: categoryId, userId },
+    select: { id: true },
+  });
+  return !!category;
+}
+
 export async function createRecordAction(
   _prevState: ActionState,
   formData: FormData,
@@ -54,6 +64,9 @@ export async function createRecordAction(
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "ログインが必要です" };
+  }
+  if (isDemoAccount(session.user.email)) {
+    return { error: DEMO_ACCOUNT_MESSAGE };
   }
 
   const parsed = extractInput(formData);
@@ -63,6 +76,10 @@ export async function createRecordAction(
 
   const { tags, categoryId, rating, startedAt, finishedAt, ...rest } =
     parsed.data;
+
+  if (categoryId && !(await assertOwnedCategory(session.user.id, categoryId))) {
+    return { error: "無効なカテゴリです" };
+  }
 
   const record = await db.record.create({
     data: {
@@ -91,6 +108,9 @@ export async function updateRecordAction(
   if (!session?.user?.id) {
     return { error: "ログインが必要です" };
   }
+  if (isDemoAccount(session.user.email)) {
+    return { error: DEMO_ACCOUNT_MESSAGE };
+  }
 
   const existing = await db.record.findFirst({
     where: { id: recordId, userId: session.user.id },
@@ -106,6 +126,10 @@ export async function updateRecordAction(
 
   const { tags, categoryId, rating, startedAt, finishedAt, ...rest } =
     parsed.data;
+
+  if (categoryId && !(await assertOwnedCategory(session.user.id, categoryId))) {
+    return { error: "無効なカテゴリです" };
+  }
 
   await db.record.update({
     where: { id: recordId },
@@ -125,10 +149,15 @@ export async function updateRecordAction(
   redirect("/records");
 }
 
-export async function deleteRecordAction(recordId: string): Promise<void> {
+export async function deleteRecordAction(
+  recordId: string,
+): Promise<ActionState> {
   const session = await auth();
   if (!session?.user?.id) {
-    return;
+    return { error: "ログインが必要です" };
+  }
+  if (isDemoAccount(session.user.email)) {
+    return { error: DEMO_ACCOUNT_MESSAGE };
   }
 
   await db.record.deleteMany({
@@ -137,4 +166,5 @@ export async function deleteRecordAction(recordId: string): Promise<void> {
 
   revalidatePath("/records");
   revalidatePath("/dashboard");
+  return { error: null };
 }
