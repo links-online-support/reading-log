@@ -18,9 +18,9 @@ export function SiteFooter() {
           <img
             src="/images/logo.webp"
             alt="就労移行支援事業所リンクス"
-            width={134}
-            height={32}
-            className="h-8 w-auto"
+            width={201}
+            height={48}
+            className="h-12 w-auto"
           />
         </a>
       </div>
