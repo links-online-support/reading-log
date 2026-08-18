@@ -1,3 +1,4 @@
+import { Circle, CircleCheck, CircleDashed, Library } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getDashboardStats } from "@/server/queries/records";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,10 +26,10 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard label="登録数" value={stats.total} />
-        <StatCard label="完了" value={stats.completed} />
-        <StatCard label="進行中" value={stats.inProgress} />
-        <StatCard label="未着手" value={stats.notStarted} />
+        <StatCard icon={Library} label="登録数" value={stats.total} />
+        <StatCard icon={CircleCheck} label="完了" value={stats.completed} />
+        <StatCard icon={CircleDashed} label="進行中" value={stats.inProgress} />
+        <StatCard icon={Circle} label="未着手" value={stats.notStarted} />
       </div>
 
       <Card>
@@ -72,7 +73,8 @@ export default async function DashboardPage() {
                       </Badge>
                     )}
                   </div>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <CircleCheck className="size-4" />
                     {STATUS_LABEL[record.status]}
                   </span>
                 </li>
@@ -85,11 +87,20 @@ export default async function DashboardPage() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Circle;
+  label: string;
+  value: number;
+}) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-normal text-muted-foreground">
+        <CardTitle className="flex items-center gap-1.5 text-sm font-normal text-muted-foreground">
+          <Icon className="size-4" />
           {label}
         </CardTitle>
       </CardHeader>
