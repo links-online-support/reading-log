@@ -1,14 +1,15 @@
-import { Circle, CircleCheck, CircleDashed, Library } from "lucide-react";
+import { Library, type LucideIcon } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getDashboardStats } from "@/server/queries/records";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-const STATUS_LABEL: Record<string, string> = {
-  NOT_STARTED: "未着手",
-  IN_PROGRESS: "進行中",
-  COMPLETED: "完了",
-};
+import {
+  STATUS_ACCENT_CLASS,
+  STATUS_ICON,
+  STATUS_LABEL,
+} from "@/lib/record-status";
+import { getCategoryBadgeClass } from "@/lib/category-colors";
+import { cn } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -27,9 +28,24 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard icon={Library} label="登録数" value={stats.total} />
-        <StatCard icon={CircleCheck} label="完了" value={stats.completed} />
-        <StatCard icon={CircleDashed} label="進行中" value={stats.inProgress} />
-        <StatCard icon={Circle} label="未着手" value={stats.notStarted} />
+        <StatCard
+          icon={STATUS_ICON.NOT_STARTED}
+          label="未着手"
+          value={stats.notStarted}
+          accentClass={STATUS_ACCENT_CLASS.NOT_STARTED}
+        />
+        <StatCard
+          icon={STATUS_ICON.IN_PROGRESS}
+          label="進行中"
+          value={stats.inProgress}
+          accentClass={STATUS_ACCENT_CLASS.IN_PROGRESS}
+        />
+        <StatCard
+          icon={STATUS_ICON.COMPLETED}
+          label="完了"
+          value={stats.completed}
+          accentClass={STATUS_ACCENT_CLASS.COMPLETED}
+        />
       </div>
 
       <Card>
@@ -68,13 +84,23 @@ export default async function DashboardPage() {
                   <div>
                     <p className="font-medium">{record.title}</p>
                     {record.category && (
-                      <Badge variant="secondary" className="mt-1">
+                      <Badge
+                        className={cn(
+                          "mt-1",
+                          getCategoryBadgeClass(record.category.color),
+                        )}
+                      >
                         {record.category.name}
                       </Badge>
                     )}
                   </div>
-                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <CircleCheck className="size-4" />
+                  <span
+                    className={cn(
+                      "flex items-center gap-1.5 text-sm",
+                      STATUS_ACCENT_CLASS[record.status],
+                    )}
+                  >
+                    <STATUS_ICON.COMPLETED className="size-4" />
                     {STATUS_LABEL[record.status]}
                   </span>
                 </li>
@@ -91,21 +117,28 @@ function StatCard({
   icon: Icon,
   label,
   value,
+  accentClass,
 }: {
-  icon: typeof Circle;
+  icon: LucideIcon;
   label: string;
   value: number;
+  accentClass?: string;
 }) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-1.5 text-sm font-normal text-muted-foreground">
+        <CardTitle
+          className={cn(
+            "flex items-center gap-1.5 text-sm font-normal",
+            accentClass ?? "text-muted-foreground",
+          )}
+        >
           <Icon className="size-4" />
           {label}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-3xl font-semibold">{value}</p>
+        <p className={cn("text-3xl font-semibold", accentClass)}>{value}</p>
       </CardContent>
     </Card>
   );

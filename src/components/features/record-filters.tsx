@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import type { Category } from "@prisma/client";
+import type { Category, RecordStatus } from "@prisma/client";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,12 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { STATUS_ICON, STATUS_LABEL } from "@/lib/record-status";
+import { getCategorySwatchClass } from "@/lib/category-colors";
+import { cn } from "@/lib/utils";
 
-const STATUS_OPTIONS = [
-  { value: "ALL", label: "すべて" },
-  { value: "NOT_STARTED", label: "未着手" },
-  { value: "IN_PROGRESS", label: "進行中" },
-  { value: "COMPLETED", label: "完了" },
+const STATUS_FILTER_ORDER: RecordStatus[] = [
+  "NOT_STARTED",
+  "IN_PROGRESS",
+  "COMPLETED",
 ];
 
 export function RecordFilters({ categories }: { categories: Category[] }) {
@@ -47,17 +49,22 @@ export function RecordFilters({ categories }: { categories: Category[] }) {
         <SelectTrigger className="sm:w-40">
           <SelectValue>
             {(value: string) =>
-              STATUS_OPTIONS.find((option) => option.value === value)?.label ??
-              value
+              value === "ALL"
+                ? "すべて"
+                : (STATUS_LABEL[value as RecordStatus] ?? value)
             }
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {STATUS_OPTIONS.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
+          <SelectItem value="ALL">すべて</SelectItem>
+          {STATUS_FILTER_ORDER.map((status) => {
+            const StatusIcon = STATUS_ICON[status];
+            return (
+              <SelectItem key={status} value={status}>
+                <StatusIcon /> {STATUS_LABEL[status]}
+              </SelectItem>
+            );
+          })}
         </SelectContent>
       </Select>
       <Select
@@ -78,6 +85,12 @@ export function RecordFilters({ categories }: { categories: Category[] }) {
           <SelectItem value="ALL">すべてのカテゴリ</SelectItem>
           {categories.map((category) => (
             <SelectItem key={category.id} value={category.id}>
+              <span
+                className={cn(
+                  "size-2.5 rounded-full",
+                  getCategorySwatchClass(category.color),
+                )}
+              />
               {category.name}
             </SelectItem>
           ))}
