@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "reading-log | 読書記録管理アプリ",
+  title: "読書ログ | 就労移行支援事業所リンクス制作のポートフォリオ見本",
   description: "読んだ本を記録し、進捗を振り返るためのアプリ",
 };
 
