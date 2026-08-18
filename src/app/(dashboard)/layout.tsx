@@ -20,7 +20,7 @@ export default async function DashboardLayout({
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-2 px-4 py-4">
           <nav className="flex items-center gap-2 sm:gap-3">
             <Link href="/dashboard" className="mr-1 font-semibold max-sm:hidden">
-              reading-log
+              読書ログ
             </Link>
             <NavLinks />
           </nav>
