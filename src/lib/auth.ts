@@ -10,6 +10,11 @@ const credentialsSchema = z.object({
   password: z.string().min(8),
 });
 
+// ユーザーが存在しない場合でもbcrypt.compareを実行し、
+// 応答時間の差からメールアドレスの登録有無が推測されない(タイミング攻撃対策)ようにする。
+const DUMMY_PASSWORD_HASH =
+  "$2a$10$CwTycUXWue0Thq9StjUM0uJ8i8mCw/6FhTt2vwYcNZ//Kx4qLj0Zi";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
@@ -27,15 +32,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const user = await db.user.findUnique({
           where: { email: parsed.data.email },
         });
-        if (!user) {
-          return null;
-        }
 
         const isValidPassword = await bcrypt.compare(
           parsed.data.password,
-          user.password,
+          user?.password ?? DUMMY_PASSWORD_HASH,
         );
-        if (!isValidPassword) {
+        if (!user || !isValidPassword) {
           return null;
         }
 
