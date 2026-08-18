@@ -1,8 +1,11 @@
+import "dotenv/config";
 import bcrypt from "bcryptjs";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { DEMO_ACCOUNT_EMAIL } from "../src/lib/demo";
 
-const db = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const db = new PrismaClient({ adapter });
 
 const DEMO_EMAIL = DEMO_ACCOUNT_EMAIL;
 const DEMO_PASSWORD = "demo12345";
