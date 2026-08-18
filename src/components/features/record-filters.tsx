@@ -20,6 +20,13 @@ const STATUS_FILTER_ORDER: RecordStatus[] = [
   "COMPLETED",
 ];
 
+const SORT_OPTIONS = [
+  { value: "updatedAt", label: "更新日が新しい順" },
+  { value: "title", label: "タイトル順" },
+  { value: "finishedAt", label: "完了日が新しい順" },
+  { value: "rating", label: "評価が高い順" },
+] as const;
+
 export function RecordFilters({ categories }: { categories: Category[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -96,6 +103,26 @@ export function RecordFilters({ categories }: { categories: Category[] }) {
                 />
                 {category.name}
               </span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select
+        defaultValue={searchParams.get("sort") ?? "updatedAt"}
+        onValueChange={(value) => updateParam("sort", value ?? "")}
+      >
+        <SelectTrigger className="sm:w-44">
+          <SelectValue>
+            {(value: string) =>
+              SORT_OPTIONS.find((option) => option.value === value)?.label ??
+              value
+            }
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {SORT_OPTIONS.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
             </SelectItem>
           ))}
         </SelectContent>

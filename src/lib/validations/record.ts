@@ -1,17 +1,44 @@
 import { z } from "zod";
 import { CATEGORY_COLORS, DEFAULT_CATEGORY_COLOR } from "@/lib/category-colors";
 
-export const recordSchema = z.object({
-  title: z.string().min(1, "タイトルを入力してください").max(200),
-  author: z.string().max(200).optional().or(z.literal("")),
-  status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"]),
-  categoryId: z.string().optional().or(z.literal("")),
-  rating: z.coerce.number().int().min(1).max(5).optional().or(z.literal("")),
-  note: z.string().max(2000).optional().or(z.literal("")),
-  startedAt: z.string().optional().or(z.literal("")),
-  finishedAt: z.string().optional().or(z.literal("")),
-  tags: z.string().max(300, "タグは300文字以内で入力してください").optional().or(z.literal("")),
-});
+export const recordSchema = z
+  .object({
+    title: z.string().min(1, "タイトルを入力してください").max(200),
+    author: z.string().max(200).optional().or(z.literal("")),
+    status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"]),
+    categoryId: z.string().optional().or(z.literal("")),
+    rating: z.coerce.number().int().min(1).max(5).optional().or(z.literal("")),
+    currentPage: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(100000)
+      .optional()
+      .or(z.literal("")),
+    totalPages: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100000)
+      .optional()
+      .or(z.literal("")),
+    note: z.string().max(2000).optional().or(z.literal("")),
+    startedAt: z.string().optional().or(z.literal("")),
+    finishedAt: z.string().optional().or(z.literal("")),
+    tags: z.string().max(300, "タグは300文字以内で入力してください").optional().or(z.literal("")),
+  })
+  .refine(
+    (data) =>
+      data.currentPage === "" ||
+      data.currentPage === undefined ||
+      data.totalPages === "" ||
+      data.totalPages === undefined ||
+      data.currentPage <= data.totalPages,
+    {
+      message: "読んだページ数は総ページ数以下にしてください",
+      path: ["currentPage"],
+    },
+  );
 
 export const categorySchema = z.object({
   name: z.string().min(1, "カテゴリ名を入力してください").max(50),
