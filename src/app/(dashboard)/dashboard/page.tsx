@@ -5,8 +5,8 @@ import { getDashboardStats } from "@/server/queries/records";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CategoryBreakdownChart } from "@/components/features/category-breakdown-chart";
-import { MonthlyCompletionsChart } from "@/components/features/monthly-completions-chart";
-import { StatusBreakdownChart } from "@/components/features/status-breakdown-chart";
+import { MonthlyActivityChart } from "@/components/features/monthly-activity-chart";
+import { RatingStars } from "@/components/features/rating-stars";
 import {
   STATUS_ACCENT_CLASS,
   STATUS_ICON,
@@ -20,26 +20,6 @@ export default async function DashboardPage() {
   const stats = await getDashboardStats(session!.user.id);
   const completionRate =
     stats.total === 0 ? 0 : Math.round((stats.completed / stats.total) * 100);
-  const statusBreakdown = [
-    {
-      status: "NOT_STARTED",
-      label: STATUS_LABEL.NOT_STARTED,
-      count: stats.notStarted,
-      color: "#a1a1aa",
-    },
-    {
-      status: "IN_PROGRESS",
-      label: STATUS_LABEL.IN_PROGRESS,
-      count: stats.inProgress,
-      color: "#3b82f6",
-    },
-    {
-      status: "COMPLETED",
-      label: STATUS_LABEL.COMPLETED,
-      count: stats.completed,
-      color: "#16a34a",
-    },
-  ];
 
   return (
     <div className="flex flex-col gap-8">
@@ -89,31 +69,21 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>カテゴリ別の記録数</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CategoryBreakdownChart data={stats.categoryBreakdown} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>進捗ステータスの内訳</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <StatusBreakdownChart data={statusBreakdown} />
-          </CardContent>
-        </Card>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>カテゴリ別の記録数</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CategoryBreakdownChart data={stats.categoryBreakdown} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>月別の読了数推移</CardTitle>
+          <CardTitle>月別 登録数/完了数</CardTitle>
         </CardHeader>
         <CardContent>
-          <MonthlyCompletionsChart data={stats.monthlyCompletions} />
+          <MonthlyActivityChart data={stats.monthlyActivity} />
         </CardContent>
       </Card>
 
@@ -140,26 +110,31 @@ export default async function DashboardPage() {
                     >
                       {record.title}
                     </Link>
-                    {record.category && (
-                      <Badge
-                        className={cn(
-                          "mt-1",
-                          getCategoryBadgeClass(record.category.color),
-                        )}
-                      >
-                        {record.category.name}
-                      </Badge>
+                    <div className="mt-1 flex items-center gap-2">
+                      {record.category && (
+                        <Badge className={getCategoryBadgeClass(record.category.color)}>
+                          {record.category.name}
+                        </Badge>
+                      )}
+                      <RatingStars value={record.rating} />
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <span
+                      className={cn(
+                        "flex items-center gap-1.5 text-sm",
+                        STATUS_ACCENT_CLASS[record.status],
+                      )}
+                    >
+                      <STATUS_ICON.COMPLETED className="size-4" />
+                      {STATUS_LABEL[record.status]}
+                    </span>
+                    {record.finishedAt && (
+                      <span className="text-xs text-muted-foreground">
+                        {record.finishedAt.toLocaleDateString("ja-JP")}
+                      </span>
                     )}
                   </div>
-                  <span
-                    className={cn(
-                      "flex items-center gap-1.5 text-sm",
-                      STATUS_ACCENT_CLASS[record.status],
-                    )}
-                  >
-                    <STATUS_ICON.COMPLETED className="size-4" />
-                    {STATUS_LABEL[record.status]}
-                  </span>
                 </li>
               ))}
             </ul>
