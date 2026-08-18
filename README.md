@@ -9,9 +9,9 @@
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-PostgreSQL-2D3748?logo=prisma&logoColor=white)
-[![Deployed on Vercel](https://img.shields.io/badge/deployed-Vercel-black?logo=vercel)](https://reading-log-mnakatani.vercel.app)
+[![Deployed on Vercel](https://img.shields.io/badge/deployed-Vercel-black?logo=vercel)](https://reading-log-phi-six.vercel.app)
 
-[デモを見る](https://reading-log-mnakatani.vercel.app) ・ [機能](#主な機能) ・ [技術選定理由](#技術スタックと選定理由) ・ [セットアップ](#セットアップ手順)
+[デモを見る](https://reading-log-phi-six.vercel.app) ・ [機能](#主な機能) ・ [技術選定理由](#技術スタックと選定理由) ・ [セットアップ](#セットアップ手順)
 
 </div>
 
@@ -48,14 +48,12 @@
 > [!TIP]
 > **📝 ポートフォリオ解説:** 採用担当者はコードを読む前に、まず「動くもの」を見たいと思っています。デモURLとテストアカウントをREADMEの冒頭近くに置き、クローンやセットアップなしに一瞬で機能を確認できるようにすることで、実際に公開・運用しているという実績そのものをアピールできます。
 
-| | |
-|---|---|
-| **Demo URL** | https://reading-log-mnakatani.vercel.app |
-| **テストアカウント** | `demo@reading-log.app` / `demo12345` |
+- **Demo URL**: https://reading-log-phi-six.vercel.app
+- **テストアカウント**: `demo@reading-log.app` / `demo12345`
 
 すぐに操作感を確認したい場合は、上記のテストアカウントでログインしてください。ダークモードにも対応しています。
 
-> **Note**: テストアカウントは不特定多数がアクセスするため閲覧専用です（作成・編集・削除はサーバー側でブロックされます）。CRUD操作を試したい場合は、[新規登録](https://reading-log-mnakatani.vercel.app/register)から自分のアカウントを作成してください。
+> **Note**: テストアカウントは不特定多数がアクセスするため閲覧専用です（作成・編集・削除はサーバー側でブロックされます）。CRUD操作を試したい場合は、[新規登録](https://reading-log-phi-six.vercel.app/register)から自分のアカウントを作成してください。
 
 ## このアプリを作った背景
 
@@ -73,19 +71,19 @@
 
 ### ダッシュボード
 
-登録数・完了数・進行中・未着手の件数と完了率、直近で完了した記録を一覧できます。
+登録数・完了数・進行中・未着手の件数と完了率に加え、カテゴリ別の記録数（横棒グラフ）、月別の登録数/完了数の推移（グループ棒グラフ）、直近で完了した記録（完了日・評価つき）を一覧できます。
 
 ![ダッシュボード](docs/screenshots/dashboard.jpg)
 
 ### 記録一覧・検索・フィルタ
 
-タイトル検索、ステータス・カテゴリによる絞り込みができます。
+タイトル検索、ステータス・カテゴリによる絞り込み、並び替え（更新日・タイトル・完了日・評価順）ができます。
 
 ![記録一覧](docs/screenshots/records.jpg)
 
 ### 記録の登録・編集
 
-タイトル・著者・ステータス・評価・カテゴリ・タグ（カンマ区切りで複数登録可）・開始日/完了日・学びメモを記録できます。カテゴリはフォーム上から追加可能です。ISBNを入力（または対応ブラウザではカメラでバーコードを読み取り）すると、書誌情報APIからタイトル・著者を自動入力できます。
+タイトル・著者・ステータス・評価（星5段階）・カテゴリ・タグ（カンマ区切りで複数登録可）・開始日/完了日・読んだページ数/総ページ数・学びメモを記録できます。カテゴリはフォーム上から追加可能です。ISBNを入力（または対応ブラウザではカメラでバーコードを読み取り）すると、書誌情報APIからタイトル・著者を自動入力できます。
 
 ![記録の追加](docs/screenshots/record-form.jpg)
 
@@ -143,8 +141,8 @@ erDiagram
   User ||--o{ Category : "所有"
   User ||--o{ Tag : "所有"
   Category ||--o{ Record : "分類"
-  Record ||--o{ RecordTag : ""
-  Tag ||--o{ RecordTag : ""
+  Record ||--o{ RecordTag : "タグ付け"
+  Tag ||--o{ RecordTag : "タグ付け"
 
   User {
     string id
@@ -204,6 +202,8 @@ gitGraph
 - タグは自由入力（カンマ区切り）から自動でレコードを作成・関連付けする実装にし、ユーザーがタグ管理画面を意識せずに使えるようにした
 - 認証設定を `auth.config.ts`（Middleware向け・DBアクセスなし）と `auth.ts`（Server Components向け・Credentials Provider含む）に分割し、Edge Runtime で動く Middleware に Prisma などNode.js依存のコードが混入しないようにした
 - 全てのDBクエリに `userId` によるスコープを付与し、他ユーザーのデータにアクセスできないようにした
+- ダッシュボードの「カテゴリ別の記録数」は円グラフではなく横棒グラフを採用した。カテゴリはユーザーが自由に追加できるため件数が可変であり、項目数が増えても崩れず、件数の大小を正確に比較できる横棒グラフの方が長期的に安全と判断した（円グラフは扇形の面積比較が要素数の増加とともに難しくなる）
+- 「月別の推移」グラフは当初、進捗ステータス（未着手/進行中/完了）の内訳を円グラフで表示していたが、その数値は上部の統計カードと完了率バーで既に示されており、円グラフは同じ情報の再掲に留まっていた。そこで「月ごとの登録ペースと完了ペースの比較」という、画面上のどこにもなかった情報を提供するグループ棒グラフ（登録数/完了数）に置き換えた
 
 ## セットアップ手順
 
@@ -257,8 +257,8 @@ pnpm build        # プロダクションビルド
 > [!TIP]
 > **📝 ポートフォリオ解説:** 「完成として終わらせず、次に何を作りたいか」を書くことで学習意欲の継続性をアピールできます。また、検討したが実装を見送った機能について理由まで書いておくと（このアプリではGoogle Books APIのクォータ・悪用リスクを理由に見送った例があります）、実装しない判断も含めた技術的な意思決定力を示せます。
 
-- 読書時間の記録・週次/月次でのグラフ表示
-- タグ・カテゴリ別の集計ビュー
+- 読書に費やした時間（分）の記録と、その推移グラフ表示（現在ダッシュボードにあるのは冊数ベースの推移のみ）
+- タグ別の集計ビュー（カテゴリ別は実装済み）
 - 本の表紙画像の登録（外部書籍API連携）
 - E2Eテスト（Playwright）の追加
 - Google Books API 経由でのISBNからの総ページ数自動取得（現在使用しているopenBDにはページ数情報が含まれていないことを確認済み。Google Books APIなら取得可能だが、公開デモでAPIキーを組み込むとクォータ枯渇や悪用のリスクがあるため、今回は見送った）
