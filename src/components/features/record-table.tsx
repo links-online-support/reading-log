@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteRecordDialog } from "@/components/features/delete-record-dialog";
+import { RatingStars } from "@/components/features/rating-stars";
 import {
   STATUS_BADGE_CLASS,
   STATUS_ICON,
@@ -36,6 +37,7 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
           <TableHead className="text-center">ステータス</TableHead>
           <TableHead className="text-center">カテゴリ</TableHead>
           <TableHead>タグ</TableHead>
+          <TableHead className="text-center">評価</TableHead>
           <TableHead className="text-center">操作</TableHead>
         </TableRow>
       </TableHeader>
@@ -84,6 +86,11 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
                     {tag.name}
                   </Badge>
                 ))}
+              </div>
+            </TableCell>
+            <TableCell className="text-center">
+              <div className="flex justify-center">
+                <RatingStars value={record.rating} />
               </div>
             </TableCell>
             <TableCell className="text-center">

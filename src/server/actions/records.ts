@@ -41,11 +41,17 @@ function extractInput(formData: FormData) {
     status: formData.get("status"),
     categoryId: formData.get("categoryId"),
     rating: formData.get("rating") || undefined,
+    currentPage: formData.get("currentPage") || undefined,
+    totalPages: formData.get("totalPages") || undefined,
     note: formData.get("note"),
     startedAt: formData.get("startedAt"),
     finishedAt: formData.get("finishedAt"),
     tags: formData.get("tags"),
   });
+}
+
+function toNullableInt(value: number | "" | undefined) {
+  return value === "" || value === undefined ? null : value;
 }
 
 async function assertOwnedCategory(userId: string, categoryId: string) {
@@ -74,8 +80,16 @@ export async function createRecordAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const { tags, categoryId, rating, startedAt, finishedAt, ...rest } =
-    parsed.data;
+  const {
+    tags,
+    categoryId,
+    rating,
+    currentPage,
+    totalPages,
+    startedAt,
+    finishedAt,
+    ...rest
+  } = parsed.data;
 
   if (categoryId && !(await assertOwnedCategory(session.user.id, categoryId))) {
     return { error: "無効なカテゴリです" };
@@ -86,7 +100,9 @@ export async function createRecordAction(
       ...rest,
       userId: session.user.id,
       categoryId: categoryId || null,
-      rating: rating === "" || rating === undefined ? null : rating,
+      rating: toNullableInt(rating),
+      currentPage: toNullableInt(currentPage),
+      totalPages: toNullableInt(totalPages),
       startedAt: startedAt ? new Date(startedAt) : null,
       finishedAt: finishedAt ? new Date(finishedAt) : null,
     },
@@ -124,8 +140,16 @@ export async function updateRecordAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const { tags, categoryId, rating, startedAt, finishedAt, ...rest } =
-    parsed.data;
+  const {
+    tags,
+    categoryId,
+    rating,
+    currentPage,
+    totalPages,
+    startedAt,
+    finishedAt,
+    ...rest
+  } = parsed.data;
 
   if (categoryId && !(await assertOwnedCategory(session.user.id, categoryId))) {
     return { error: "無効なカテゴリです" };
@@ -136,7 +160,9 @@ export async function updateRecordAction(
     data: {
       ...rest,
       categoryId: categoryId || null,
-      rating: rating === "" || rating === undefined ? null : rating,
+      rating: toNullableInt(rating),
+      currentPage: toNullableInt(currentPage),
+      totalPages: toNullableInt(totalPages),
       startedAt: startedAt ? new Date(startedAt) : null,
       finishedAt: finishedAt ? new Date(finishedAt) : null,
     },

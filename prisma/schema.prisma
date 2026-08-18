@@ -58,6 +58,8 @@ model Record {
   author      String?
   status      RecordStatus @default(NOT_STARTED)
   rating      Int?
+  currentPage Int?
+  totalPages  Int?
   note        String?
   startedAt   DateTime?
   finishedAt  DateTime?

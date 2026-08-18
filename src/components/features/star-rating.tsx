@@ -23,7 +23,7 @@ export function StarRating({
       <input type="hidden" name={name} value={value ?? ""} />
       <div
         role="radiogroup"
-        aria-label="満足度"
+        aria-label="評価"
         className="flex items-center gap-0.5"
         onMouseLeave={() => setHoverValue(null)}
       >
