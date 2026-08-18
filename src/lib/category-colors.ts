@@ -44,6 +44,20 @@ export const CATEGORY_SWATCH_CLASS: Record<CategoryColor, string> = {
   pink: "bg-pink-500",
 };
 
+// グラフ描画（Recharts）はTailwindクラスではなく実際の色値が必要なため、
+// スウォッチと同じ色調をhexで用意している。
+const CATEGORY_HEX: Record<CategoryColor, string> = {
+  gray: "#a1a1aa",
+  red: "#ef4444",
+  orange: "#f97316",
+  amber: "#f59e0b",
+  green: "#22c55e",
+  teal: "#14b8a6",
+  blue: "#3b82f6",
+  purple: "#a855f7",
+  pink: "#ec4899",
+};
+
 export function isCategoryColor(value: string): value is CategoryColor {
   return (CATEGORY_COLORS as readonly string[]).includes(value);
 }
@@ -58,4 +72,8 @@ export function getCategoryBadgeClass(color: string): string {
 
 export function getCategorySwatchClass(color: string): string {
   return CATEGORY_SWATCH_CLASS[resolveCategoryColor(color)];
+}
+
+export function getCategoryChartColor(color: string): string {
+  return CATEGORY_HEX[resolveCategoryColor(color)];
 }
