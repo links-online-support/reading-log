@@ -1,0 +1,44 @@
+import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { getRecords } from "@/server/queries/records";
+import { getCategories } from "@/server/queries/categories";
+import { Button } from "@/components/ui/button";
+import { RecordFilters } from "@/components/features/record-filters";
+import { RecordTable } from "@/components/features/record-table";
+
+type SearchParams = {
+  query?: string;
+  status?: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+  categoryId?: string;
+};
+
+export default async function RecordsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const session = await auth();
+  const params = await searchParams;
+
+  const [records, categories] = await Promise.all([
+    getRecords(session!.user.id, params),
+    getCategories(session!.user.id),
+  ]);
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">記録一覧</h1>
+          <p className="text-sm text-muted-foreground">
+            登録した本・学習記録を検索・絞り込みできます
+          </p>
+        </div>
+        <Button render={<Link href="/records/new" />}>+ 新しい記録</Button>
+      </div>
+
+      <RecordFilters categories={categories} />
+      <RecordTable records={records} />
+    </div>
+  );
+}
