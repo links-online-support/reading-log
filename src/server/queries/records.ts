@@ -64,17 +64,32 @@ function getCategoryBreakdown(
   return Array.from(counts.values()).sort((a, b) => b.count - a.count);
 }
 
-function getMonthlyCompletions(records: { finishedAt: Date | null }[]) {
-  const counts = new Map<string, number>();
+function toMonthKey(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
 
-  for (const { finishedAt } of records) {
-    if (!finishedAt) continue;
-    const month = `${finishedAt.getFullYear()}-${String(finishedAt.getMonth() + 1).padStart(2, "0")}`;
-    counts.set(month, (counts.get(month) ?? 0) + 1);
+function getMonthlyActivity(
+  records: { createdAt: Date; finishedAt: Date | null }[],
+) {
+  const counts = new Map<string, { registered: number; completed: number }>();
+
+  for (const { createdAt, finishedAt } of records) {
+    const registeredMonth = toMonthKey(createdAt);
+    const entry = counts.get(registeredMonth) ?? { registered: 0, completed: 0 };
+    entry.registered += 1;
+    counts.set(registeredMonth, entry);
+
+    if (finishedAt) {
+      const completedMonth = toMonthKey(finishedAt);
+      const completedEntry =
+        counts.get(completedMonth) ?? { registered: 0, completed: 0 };
+      completedEntry.completed += 1;
+      counts.set(completedMonth, completedEntry);
+    }
   }
 
   return Array.from(counts.entries())
-    .map(([month, count]) => ({ month, count }))
+    .map(([month, { registered, completed }]) => ({ month, registered, completed }))
     .sort((a, b) => a.month.localeCompare(b.month));
 }
 
@@ -94,6 +109,7 @@ export async function getDashboardStats(userId: string) {
       db.record.findMany({
         where: { userId },
         select: {
+          createdAt: true,
           finishedAt: true,
           category: { select: { name: true, color: true } },
         },
@@ -107,6 +123,6 @@ export async function getDashboardStats(userId: string) {
     notStarted,
     recentlyCompleted,
     categoryBreakdown: getCategoryBreakdown(allRecords),
-    monthlyCompletions: getMonthlyCompletions(allRecords),
+    monthlyActivity: getMonthlyActivity(allRecords),
   };
 }
