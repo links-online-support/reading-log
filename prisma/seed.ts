@@ -23,18 +23,18 @@ async function main() {
   const [techBook, certification, onlineCourse] = await Promise.all([
     db.category.upsert({
       where: { userId_name: { userId: user.id, name: "技術書" } },
-      update: {},
-      create: { userId: user.id, name: "技術書" },
+      update: { color: "blue" },
+      create: { userId: user.id, name: "技術書", color: "blue" },
     }),
     db.category.upsert({
       where: { userId_name: { userId: user.id, name: "資格学習" } },
-      update: {},
-      create: { userId: user.id, name: "資格学習" },
+      update: { color: "purple" },
+      create: { userId: user.id, name: "資格学習", color: "purple" },
     }),
     db.category.upsert({
       where: { userId_name: { userId: user.id, name: "オンライン講座" } },
-      update: {},
-      create: { userId: user.id, name: "オンライン講座" },
+      update: { color: "teal" },
+      create: { userId: user.id, name: "オンライン講座", color: "teal" },
     }),
   ]);
 

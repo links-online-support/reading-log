@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Circle, CircleCheck, CircleDashed } from "lucide-react";
 import type { RecordWithRelations } from "@/types/record";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,24 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteRecordDialog } from "@/components/features/delete-record-dialog";
-
-const STATUS_LABEL: Record<string, string> = {
-  NOT_STARTED: "未着手",
-  IN_PROGRESS: "進行中",
-  COMPLETED: "完了",
-};
-
-const STATUS_VARIANT: Record<string, "outline" | "secondary" | "default"> = {
-  NOT_STARTED: "outline",
-  IN_PROGRESS: "secondary",
-  COMPLETED: "default",
-};
-
-const STATUS_ICON: Record<string, typeof Circle> = {
-  NOT_STARTED: Circle,
-  IN_PROGRESS: CircleDashed,
-  COMPLETED: CircleCheck,
-};
+import {
+  STATUS_BADGE_CLASS,
+  STATUS_ICON,
+  STATUS_LABEL,
+} from "@/lib/record-status";
+import { getCategoryBadgeClass } from "@/lib/category-colors";
+import { cn } from "@/lib/utils";
 
 export function RecordTable({ records }: { records: RecordWithRelations[] }) {
   if (records.length === 0) {
@@ -65,12 +53,25 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
               )}
             </TableCell>
             <TableCell className="text-center">
-              <Badge variant={STATUS_VARIANT[record.status]}>
+              <Badge
+                className={cn(
+                  "w-20 justify-center",
+                  STATUS_BADGE_CLASS[record.status],
+                )}
+              >
                 <StatusIcon />
                 {STATUS_LABEL[record.status]}
               </Badge>
             </TableCell>
-            <TableCell>{record.category?.name ?? "-"}</TableCell>
+            <TableCell>
+              {record.category ? (
+                <Badge className={getCategoryBadgeClass(record.category.color)}>
+                  {record.category.name}
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground">-</span>
+              )}
+            </TableCell>
             <TableCell>
               <div className="flex flex-wrap gap-1">
                 {record.tags.map(({ tag }) => (
