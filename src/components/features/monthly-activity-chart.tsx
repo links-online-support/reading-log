@@ -3,16 +3,19 @@
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 import { useMounted } from "@/hooks/use-mounted";
 
-type MonthlyCompletion = { month: string; count: number };
+type MonthlyActivity = { month: string; registered: number; completed: number };
 
 const chartConfig = {
-  count: { label: "読了数", color: "#16a34a" },
+  registered: { label: "登録数", color: "#a1a1aa" },
+  completed: { label: "完了数", color: "#16a34a" },
 } satisfies ChartConfig;
 
 function formatMonthLabel(month: string) {
@@ -20,11 +23,7 @@ function formatMonthLabel(month: string) {
   return `${year.slice(2)}/${Number(monthNum)}`;
 }
 
-export function MonthlyCompletionsChart({
-  data,
-}: {
-  data: MonthlyCompletion[];
-}) {
+export function MonthlyActivityChart({ data }: { data: MonthlyActivity[] }) {
   const mounted = useMounted();
 
   if (data.length === 0) {
@@ -52,9 +51,11 @@ export function MonthlyCompletionsChart({
         <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
         <ChartTooltip
           cursor={{ fill: "var(--muted)", opacity: 0.4 }}
-          content={<ChartTooltipContent hideLabel />}
+          content={<ChartTooltipContent />}
         />
-        <Bar dataKey="count" fill="var(--color-count)" radius={4} />
+        <Bar dataKey="registered" fill="var(--color-registered)" radius={4} />
+        <Bar dataKey="completed" fill="var(--color-completed)" radius={4} />
+        <ChartLegend content={<ChartLegendContent />} />
       </BarChart>
     </ChartContainer>
   );
