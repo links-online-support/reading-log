@@ -155,8 +155,8 @@ export async function updateRecordAction(
     return { error: "無効なカテゴリです" };
   }
 
-  await db.record.update({
-    where: { id: recordId },
+  await db.record.updateMany({
+    where: { id: recordId, userId: session.user.id },
     data: {
       ...rest,
       categoryId: categoryId || null,
