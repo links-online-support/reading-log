@@ -26,7 +26,7 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle>ログイン</CardTitle>
           <CardDescription>
-            reading-log にログインして学習記録を管理しましょう
+            reading-log にログインして読書記録を管理しましょう
           </CardDescription>
         </CardHeader>
         <form action={formAction}>

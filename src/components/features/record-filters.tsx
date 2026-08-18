@@ -61,7 +61,9 @@ export function RecordFilters({ categories }: { categories: Category[] }) {
             const StatusIcon = STATUS_ICON[status];
             return (
               <SelectItem key={status} value={status}>
-                <StatusIcon /> {STATUS_LABEL[status]}
+                <span className="inline-flex items-center gap-1.5">
+                  <StatusIcon /> {STATUS_LABEL[status]}
+                </span>
               </SelectItem>
             );
           })}
@@ -85,13 +87,15 @@ export function RecordFilters({ categories }: { categories: Category[] }) {
           <SelectItem value="ALL">すべてのカテゴリ</SelectItem>
           {categories.map((category) => (
             <SelectItem key={category.id} value={category.id}>
-              <span
-                className={cn(
-                  "size-2.5 rounded-full",
-                  getCategorySwatchClass(category.color),
-                )}
-              />
-              {category.name}
+              <span className="inline-flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "size-2.5 rounded-full",
+                    getCategorySwatchClass(category.color),
+                  )}
+                />
+                {category.name}
+              </span>
             </SelectItem>
           ))}
         </SelectContent>
