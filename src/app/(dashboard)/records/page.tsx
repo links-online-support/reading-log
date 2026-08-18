@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { getRecords } from "@/server/queries/records";
 import { getCategories } from "@/server/queries/categories";
@@ -8,9 +9,15 @@ import { RecordTable } from "@/components/features/record-table";
 
 type SearchParams = {
   query?: string;
-  status?: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+  status?: string;
   categoryId?: string;
 };
+
+const searchParamsSchema = z.object({
+  query: z.string().max(200).optional(),
+  status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"]).optional(),
+  categoryId: z.string().optional(),
+});
 
 export default async function RecordsPage({
   searchParams,
@@ -18,7 +25,9 @@ export default async function RecordsPage({
   searchParams: Promise<SearchParams>;
 }) {
   const session = await auth();
-  const params = await searchParams;
+  const rawParams = await searchParams;
+  const parsedParams = searchParamsSchema.safeParse(rawParams);
+  const params = parsedParams.success ? parsedParams.data : {};
 
   const [records, categories] = await Promise.all([
     getRecords(session!.user.id, params),

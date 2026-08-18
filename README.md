@@ -1,17 +1,45 @@
-# reading-log 📚
+<div align="center">
 
-読んだ本や学習した内容を記録し、進捗をひと目で振り返れる学習記録管理アプリです。
+# 📚 reading-log
+
+読んだ本や学習した内容を記録し、進捗をひと目で振り返れる学習記録管理アプリ
+
+[![CI](https://github.com/links-mnakatani/reading-log/actions/workflows/ci.yml/badge.svg)](https://github.com/links-mnakatani/reading-log/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-PostgreSQL-2D3748?logo=prisma&logoColor=white)
+[![Deployed on Vercel](https://img.shields.io/badge/deployed-Vercel-black?logo=vercel)](https://reading-log-mnakatani.vercel.app)
+
+[デモを見る](https://reading-log-mnakatani.vercel.app) ・ [機能](#主な機能) ・ [技術選定理由](#技術スタックと選定理由) ・ [セットアップ](#セットアップ手順)
+
+</div>
 
 ![ダッシュボード](docs/screenshots/dashboard.jpg)
 
+## 目次
+
+- [デモ](#デモ)
+- [このアプリを作った背景](#このアプリを作った背景)
+- [主な機能](#主な機能)
+- [技術スタックと選定理由](#技術スタックと選定理由)
+- [アーキテクチャ](#アーキテクチャ)
+- [開発フロー](#開発フロー)
+- [こだわった点](#こだわった点)
+- [セットアップ手順](#セットアップ手順)
+- [今後の展望](#今後の展望)
+- [学んだこと・苦労した点](#学んだこと苦労した点)
+
 ## デモ
 
-- **Demo URL**: （デプロイ後に追記予定）
-- **テストアカウント**
-  - メールアドレス: `demo@reading-log.app`
-  - パスワード: `demo12345`
+| | |
+|---|---|
+| **Demo URL** | https://reading-log-mnakatani.vercel.app |
+| **テストアカウント** | `demo@reading-log.app` / `demo12345` |
 
-すぐに操作感を確認したい場合は、上記のテストアカウントでログインしてください。
+すぐに操作感を確認したい場合は、上記のテストアカウントでログインしてください。ダークモードにも対応しています。
+
+> **Note**: テストアカウントは不特定多数がアクセスするため閲覧専用です（作成・編集・削除はサーバー側でブロックされます）。CRUD操作を試したい場合は、[新規登録](https://reading-log-mnakatani.vercel.app/register)から自分のアカウントを作成してください。
 
 ## このアプリを作った背景
 
@@ -114,6 +142,28 @@ erDiagram
   }
 ```
 
+## 開発フロー
+
+```mermaid
+gitGraph
+  commit id: "init"
+  branch develop
+  checkout develop
+  branch feature/xxx
+  checkout feature/xxx
+  commit id: "feat: 機能を実装"
+  checkout develop
+  merge feature/xxx
+  checkout main
+  merge develop tag: "release"
+```
+
+`main` を安定版・本番デプロイ用ブランチとし、`develop` を開発の統合ブランチとして運用しています。
+
+- 機能追加・修正は `feature/xxx` ブランチを `develop` から作成し、Pull Request経由で `develop` にマージ
+- CI（Lint / 型チェック / テスト / ビルド）はPull Requestごとに自動実行
+- `develop` の変更がまとまった時点で `develop` → `main` へマージし、Vercelが自動で本番デプロイ
+
 ## こだわった点
 
 - Server Actions の戻り値を `{ error }` 形式に統一し、`useActionState` でエラーメッセージをフォーム上にそのまま表示できるようにした
@@ -180,4 +230,4 @@ pnpm build        # プロダクションビルド
 
 ## ライセンス
 
-このリポジトリは学習・ポートフォリオ用のサンプルです。
+[MIT](LICENSE)

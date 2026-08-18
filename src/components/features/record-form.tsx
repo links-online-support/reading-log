@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { Circle, CircleCheck, CircleDashed } from "lucide-react";
 import type { Category } from "@prisma/client";
 import type { RecordWithRelations } from "@/types/record";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,7 @@ export function RecordForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <Label htmlFor="status">ステータス</Label>
           <Select name="status" defaultValue={record?.status ?? "NOT_STARTED"}>
@@ -79,9 +80,15 @@ export function RecordForm({
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="NOT_STARTED">未着手</SelectItem>
-              <SelectItem value="IN_PROGRESS">進行中</SelectItem>
-              <SelectItem value="COMPLETED">完了</SelectItem>
+              <SelectItem value="NOT_STARTED">
+                <Circle /> 未着手
+              </SelectItem>
+              <SelectItem value="IN_PROGRESS">
+                <CircleDashed /> 進行中
+              </SelectItem>
+              <SelectItem value="COMPLETED">
+                <CircleCheck /> 完了
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -133,7 +140,7 @@ export function RecordForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <Label htmlFor="startedAt">開始日</Label>
           <Input
