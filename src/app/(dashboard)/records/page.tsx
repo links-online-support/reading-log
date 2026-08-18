@@ -40,7 +40,7 @@ export default async function RecordsPage({
         <div>
           <h1 className="text-2xl font-semibold">記録一覧</h1>
           <p className="text-sm text-muted-foreground">
-            登録した本・学習記録を検索・絞り込みできます
+            登録した本を検索・絞り込みできます
           </p>
         </div>
         <Button render={<Link href="/records/new" />}>+ 新しい記録</Button>

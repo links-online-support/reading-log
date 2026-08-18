@@ -34,9 +34,9 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
         <TableRow>
           <TableHead>タイトル</TableHead>
           <TableHead className="text-center">ステータス</TableHead>
-          <TableHead>カテゴリ</TableHead>
+          <TableHead className="text-center">カテゴリ</TableHead>
           <TableHead>タグ</TableHead>
-          <TableHead className="text-right">操作</TableHead>
+          <TableHead className="text-center">操作</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -63,9 +63,14 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
                 {STATUS_LABEL[record.status]}
               </Badge>
             </TableCell>
-            <TableCell>
+            <TableCell className="text-center">
               {record.category ? (
-                <Badge className={getCategoryBadgeClass(record.category.color)}>
+                <Badge
+                  className={cn(
+                    "w-24 justify-center",
+                    getCategoryBadgeClass(record.category.color),
+                  )}
+                >
                   {record.category.name}
                 </Badge>
               ) : (
@@ -81,8 +86,8 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
                 ))}
               </div>
             </TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end gap-2">
+            <TableCell className="text-center">
+              <div className="flex justify-center gap-2">
                 <Button
                   render={<Link href={`/records/${record.id}/edit`} />}
                   variant="outline"
