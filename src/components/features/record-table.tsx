@@ -31,7 +31,7 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
 
   return (
     <Table>
-      <TableHeader>
+      <TableHeader className="bg-muted">
         <TableRow>
           <TableHead>タイトル</TableHead>
           <TableHead className="text-center">ステータス</TableHead>
@@ -42,10 +42,13 @@ export function RecordTable({ records }: { records: RecordWithRelations[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {records.map((record) => {
+        {records.map((record, index) => {
           const StatusIcon = STATUS_ICON[record.status];
           return (
-          <TableRow key={record.id}>
+          <TableRow
+            key={record.id}
+            className={index % 2 === 1 ? "bg-muted/30" : undefined}
+          >
             <TableCell>
               <Link href={`/records/${record.id}/edit`} className="font-medium hover:underline">
                 {record.title}

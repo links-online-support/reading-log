@@ -45,8 +45,41 @@ export async function getRecordById(userId: string, recordId: string) {
   });
 }
 
+function getCategoryBreakdown(
+  records: { category: { name: string; color: string } | null }[],
+) {
+  const counts = new Map<string, { name: string; color: string; count: number }>();
+
+  for (const { category } of records) {
+    const name = category?.name ?? "未分類";
+    const color = category?.color ?? "gray";
+    const existing = counts.get(name);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      counts.set(name, { name, color, count: 1 });
+    }
+  }
+
+  return Array.from(counts.values()).sort((a, b) => b.count - a.count);
+}
+
+function getMonthlyCompletions(records: { finishedAt: Date | null }[]) {
+  const counts = new Map<string, number>();
+
+  for (const { finishedAt } of records) {
+    if (!finishedAt) continue;
+    const month = `${finishedAt.getFullYear()}-${String(finishedAt.getMonth() + 1).padStart(2, "0")}`;
+    counts.set(month, (counts.get(month) ?? 0) + 1);
+  }
+
+  return Array.from(counts.entries())
+    .map(([month, count]) => ({ month, count }))
+    .sort((a, b) => a.month.localeCompare(b.month));
+}
+
 export async function getDashboardStats(userId: string) {
-  const [total, completed, inProgress, notStarted, recentlyCompleted] =
+  const [total, completed, inProgress, notStarted, recentlyCompleted, allRecords] =
     await Promise.all([
       db.record.count({ where: { userId } }),
       db.record.count({ where: { userId, status: "COMPLETED" } }),
@@ -58,7 +91,22 @@ export async function getDashboardStats(userId: string) {
         take: 5,
         include: { category: true },
       }),
+      db.record.findMany({
+        where: { userId },
+        select: {
+          finishedAt: true,
+          category: { select: { name: true, color: true } },
+        },
+      }),
     ]);
 
-  return { total, completed, inProgress, notStarted, recentlyCompleted };
+  return {
+    total,
+    completed,
+    inProgress,
+    notStarted,
+    recentlyCompleted,
+    categoryBreakdown: getCategoryBreakdown(allRecords),
+    monthlyCompletions: getMonthlyCompletions(allRecords),
+  };
 }
