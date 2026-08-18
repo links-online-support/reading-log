@@ -9,7 +9,7 @@ export const recordSchema = z.object({
   note: z.string().max(2000).optional().or(z.literal("")),
   startedAt: z.string().optional().or(z.literal("")),
   finishedAt: z.string().optional().or(z.literal("")),
-  tags: z.string().optional().or(z.literal("")),
+  tags: z.string().max(300, "タグは300文字以内で入力してください").optional().or(z.literal("")),
 });
 
 export const categorySchema = z.object({

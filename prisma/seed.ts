@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
+import { DEMO_ACCOUNT_EMAIL } from "../src/lib/demo";
 
 const db = new PrismaClient();
 
-const DEMO_EMAIL = "demo@reading-log.app";
+const DEMO_EMAIL = DEMO_ACCOUNT_EMAIL;
 const DEMO_PASSWORD = "demo12345";
 
 async function main() {
