@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CATEGORY_COLORS, DEFAULT_CATEGORY_COLOR } from "@/lib/category-colors";
 
 export const recordSchema = z.object({
   title: z.string().min(1, "タイトルを入力してください").max(200),
@@ -14,4 +15,5 @@ export const recordSchema = z.object({
 
 export const categorySchema = z.object({
   name: z.string().min(1, "カテゴリ名を入力してください").max(50),
+  color: z.enum(CATEGORY_COLORS).default(DEFAULT_CATEGORY_COLOR),
 });

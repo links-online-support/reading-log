@@ -23,7 +23,12 @@ function buildRecord(
     updatedAt: new Date(),
     userId: "user-1",
     categoryId: "category-1",
-    category: { id: "category-1", name: "技術書", userId: "user-1" },
+    category: {
+      id: "category-1",
+      name: "技術書",
+      color: "blue",
+      userId: "user-1",
+    },
     tags: [
       {
         recordId: "record-1",
