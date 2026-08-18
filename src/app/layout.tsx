@@ -8,8 +8,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "reading-log | 学習記録管理アプリ",
-  description: "読んだ本や学習内容を記録し、進捗を振り返るためのアプリ",
+  title: "reading-log | 読書記録管理アプリ",
+  description: "読んだ本を記録し、進捗を振り返るためのアプリ",
 };
 
 export default function RootLayout({
