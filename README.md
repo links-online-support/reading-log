@@ -9,9 +9,9 @@
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-PostgreSQL-2D3748?logo=prisma&logoColor=white)
-[![Deployed on Vercel](https://img.shields.io/badge/deployed-Vercel-black?logo=vercel)](https://reading-log-phi-six.vercel.app)
+[![Deployed on Vercel](https://img.shields.io/badge/deployed-Vercel-black?logo=vercel)](https://reading-log-pi.vercel.app)
 
-[デモを見る](https://reading-log-phi-six.vercel.app) ・ [機能](#主な機能) ・ [技術選定理由](#技術スタックと選定理由) ・ [セットアップ](#セットアップ手順)
+[デモを見る](https://reading-log-pi.vercel.app) ・ [機能](#主な機能) ・ [技術選定理由](#技術スタックと選定理由) ・ [セットアップ](#セットアップ手順)
 
 </div>
 
@@ -48,12 +48,12 @@
 > [!TIP]
 > **📝 ポートフォリオ解説:** 採用担当者はコードを読む前に、まず「動くもの」を見たいと思っています。デモURLとテストアカウントをREADMEの冒頭近くに置き、クローンやセットアップなしに一瞬で機能を確認できるようにすることで、実際に公開・運用しているという実績そのものをアピールできます。
 
-- **Demo URL**: https://reading-log-phi-six.vercel.app
+- **Demo URL**: https://reading-log-pi.vercel.app
 - **テストアカウント**: `demo@reading-log.app` / `demo12345`
 
 すぐに操作感を確認したい場合は、上記のテストアカウントでログインしてください。ダークモードにも対応しています。
 
-> **Note**: テストアカウントは不特定多数がアクセスするため閲覧専用です（作成・編集・削除はサーバー側でブロックされます）。CRUD操作を試したい場合は、[新規登録](https://reading-log-phi-six.vercel.app/register)から自分のアカウントを作成してください。
+> **Note**: テストアカウントは不特定多数がアクセスするため閲覧専用です（作成・編集・削除はサーバー側でブロックされます）。CRUD操作を試したい場合は、[新規登録](https://reading-log-pi.vercel.app/register)から自分のアカウントを作成してください。
 
 ## このアプリを作った背景
 
