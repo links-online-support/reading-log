@@ -1,8 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Circle, CircleCheck, CircleDashed } from "lucide-react";
-import type { Category } from "@prisma/client";
+import type { RecordStatus, Category } from "@prisma/client";
 import type { RecordWithRelations } from "@/types/record";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +15,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AddCategoryDialog } from "@/components/features/add-category-dialog";
+import { STATUS_ICON, STATUS_LABEL } from "@/lib/record-status";
+import { getCategorySwatchClass } from "@/lib/category-colors";
+import { cn } from "@/lib/utils";
+
+const STATUS_ORDER: RecordStatus[] = ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"];
 
 type ActionState = { error: string | null };
 type RecordFormAction = (
@@ -70,25 +74,18 @@ export function RecordForm({
           <Select name="status" defaultValue={record?.status ?? "NOT_STARTED"}>
             <SelectTrigger id="status">
               <SelectValue>
-                {(value: string) =>
-                  ({
-                    NOT_STARTED: "未着手",
-                    IN_PROGRESS: "進行中",
-                    COMPLETED: "完了",
-                  })[value] ?? value
-                }
+                {(value: string) => STATUS_LABEL[value as RecordStatus] ?? value}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="NOT_STARTED">
-                <Circle /> 未着手
-              </SelectItem>
-              <SelectItem value="IN_PROGRESS">
-                <CircleDashed /> 進行中
-              </SelectItem>
-              <SelectItem value="COMPLETED">
-                <CircleCheck /> 完了
-              </SelectItem>
+              {STATUS_ORDER.map((status) => {
+                const StatusIcon = STATUS_ICON[status];
+                return (
+                  <SelectItem key={status} value={status}>
+                    <StatusIcon /> {STATUS_LABEL[status]}
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
         </div>
@@ -123,6 +120,12 @@ export function RecordForm({
           <SelectContent>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
+                <span
+                  className={cn(
+                    "size-2.5 rounded-full",
+                    getCategorySwatchClass(category.color),
+                  )}
+                />
                 {category.name}
               </SelectItem>
             ))}

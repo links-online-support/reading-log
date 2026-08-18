@@ -19,7 +19,10 @@ export async function createCategoryAction(
     return { data: null, error: DEMO_ACCOUNT_MESSAGE };
   }
 
-  const parsed = categorySchema.safeParse({ name: formData.get("name") });
+  const parsed = categorySchema.safeParse({
+    name: formData.get("name"),
+    color: formData.get("color") || undefined,
+  });
   if (!parsed.success) {
     return { data: null, error: parsed.error.issues[0].message };
   }
@@ -28,8 +31,12 @@ export async function createCategoryAction(
     where: {
       userId_name: { userId: session.user.id, name: parsed.data.name },
     },
-    update: {},
-    create: { userId: session.user.id, name: parsed.data.name },
+    update: { color: parsed.data.color },
+    create: {
+      userId: session.user.id,
+      name: parsed.data.name,
+      color: parsed.data.color,
+    },
   });
 
   revalidatePath("/records");
