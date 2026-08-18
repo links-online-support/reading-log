@@ -26,7 +26,7 @@ export default function RegisterPage() {
         <CardHeader>
           <CardTitle>新規登録</CardTitle>
           <CardDescription>
-            アカウントを作成して学習の記録を始めましょう
+            アカウントを作成して読書の記録を始めましょう
           </CardDescription>
         </CardHeader>
         <form action={formAction}>

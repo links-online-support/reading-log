@@ -12,7 +12,7 @@ export default async function NewRecordPage() {
       <div>
         <h1 className="text-2xl font-semibold">新しい記録を追加</h1>
         <p className="text-sm text-muted-foreground">
-          読んだ本や学習した内容を記録しましょう
+          読んだ本を記録しましょう
         </p>
       </div>
       <RecordForm action={createRecordAction} categories={categories} />

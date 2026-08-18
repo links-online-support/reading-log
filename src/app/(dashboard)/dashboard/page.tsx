@@ -22,7 +22,7 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-2xl font-semibold">ダッシュボード</h1>
         <p className="text-sm text-muted-foreground">
-          学習の進捗状況をひと目で確認できます
+          読書の進捗状況をひと目で確認できます
         </p>
       </div>
 

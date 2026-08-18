@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { createCategoryAction } from "@/server/actions/categories";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,11 @@ import {
 } from "@/lib/category-colors";
 import { cn } from "@/lib/utils";
 
-export function AddCategoryDialog() {
+export function AddCategoryDialog({
+  iconOnly = false,
+}: {
+  iconOnly?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [color, setColor] = useState<CategoryColor>(DEFAULT_CATEGORY_COLOR);
   const [isPending, startTransition] = useTransition();
@@ -47,8 +52,18 @@ export function AddCategoryDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button type="button" variant="outline" size="sm" />}>
-        + 新しいカテゴリ
+      <DialogTrigger
+        render={
+          <Button
+            type="button"
+            variant="outline"
+            size={iconOnly ? "icon-sm" : "sm"}
+            aria-label="新しいカテゴリを追加"
+          />
+        }
+      >
+        <Plus />
+        {!iconOnly && "新しいカテゴリ"}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
