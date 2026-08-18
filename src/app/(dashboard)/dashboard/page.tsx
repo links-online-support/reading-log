@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Library, type LucideIcon } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getDashboardStats } from "@/server/queries/records";
@@ -82,7 +83,12 @@ export default async function DashboardPage() {
                   className="flex items-center justify-between border-b pb-2 last:border-none"
                 >
                   <div>
-                    <p className="font-medium">{record.title}</p>
+                    <Link
+                      href={`/records/${record.id}/edit`}
+                      className="block font-medium hover:underline"
+                    >
+                      {record.title}
+                    </Link>
                     {record.category && (
                       <Badge
                         className={cn(

@@ -16,6 +16,8 @@ function buildRecord(
     author: "Dustin Boswell",
     status: "COMPLETED",
     rating: 5,
+    currentPage: null,
+    totalPages: null,
     note: null,
     startedAt: null,
     finishedAt: null,

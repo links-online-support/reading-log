@@ -108,7 +108,7 @@ export function RecordForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label>満足度（任意）</Label>
+          <Label>評価（任意）</Label>
           <StarRating name="rating" defaultValue={record?.rating} />
         </div>
       </div>
@@ -172,6 +172,31 @@ export function RecordForm({
             name="finishedAt"
             type="date"
             defaultValue={toDateInputValue(record?.finishedAt)}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="currentPage">読んだページ（任意）</Label>
+          <Input
+            id="currentPage"
+            name="currentPage"
+            type="number"
+            min={0}
+            max={100000}
+            defaultValue={record?.currentPage ?? ""}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="totalPages">総ページ数（任意）</Label>
+          <Input
+            id="totalPages"
+            name="totalPages"
+            type="number"
+            min={1}
+            max={100000}
+            defaultValue={record?.totalPages ?? ""}
           />
         </div>
       </div>
