@@ -11,12 +11,14 @@ type SearchParams = {
   query?: string;
   status?: string;
   categoryId?: string;
+  sort?: string;
 };
 
 const searchParamsSchema = z.object({
   query: z.string().max(200).optional(),
   status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"]).optional(),
   categoryId: z.string().optional(),
+  sort: z.enum(["updatedAt", "title", "finishedAt", "rating"]).optional(),
 });
 
 export default async function RecordsPage({

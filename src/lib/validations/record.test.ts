@@ -46,6 +46,28 @@ describe("recordSchema", () => {
       expect(result.data.rating).toBe(4);
     }
   });
+
+  it("読んだページ数が総ページ数を超える場合はエラーになる", () => {
+    const result = recordSchema.safeParse({
+      ...validInput,
+      currentPage: "300",
+      totalPages: "200",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("読んだページ数・総ページ数を正しく数値に変換する", () => {
+    const result = recordSchema.safeParse({
+      ...validInput,
+      currentPage: "150",
+      totalPages: "300",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.currentPage).toBe(150);
+      expect(result.data.totalPages).toBe(300);
+    }
+  });
 });
 
 describe("categorySchema", () => {

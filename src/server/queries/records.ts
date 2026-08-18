@@ -1,5 +1,21 @@
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import type { RecordFilters } from "@/types/record";
+
+function resolveOrderBy(
+  sort: RecordFilters["sort"],
+): Prisma.RecordOrderByWithRelationInput {
+  switch (sort) {
+    case "title":
+      return { title: "asc" };
+    case "finishedAt":
+      return { finishedAt: { sort: "desc", nulls: "last" } };
+    case "rating":
+      return { rating: { sort: "desc", nulls: "last" } };
+    default:
+      return { updatedAt: "desc" };
+  }
+}
 
 export async function getRecords(userId: string, filters: RecordFilters = {}) {
   return db.record.findMany({
@@ -15,7 +31,7 @@ export async function getRecords(userId: string, filters: RecordFilters = {}) {
       category: true,
       tags: { include: { tag: true } },
     },
-    orderBy: { updatedAt: "desc" },
+    orderBy: resolveOrderBy(filters.sort),
   });
 }
 

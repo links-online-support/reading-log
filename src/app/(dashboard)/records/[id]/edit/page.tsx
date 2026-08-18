@@ -24,10 +24,7 @@ export default async function EditRecordPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">記録を編集</h1>
-        <p className="text-sm text-muted-foreground">{record.title}</p>
-      </div>
+      <h1 className="text-2xl font-semibold">記録を編集</h1>
       <RecordForm
         action={updateRecordAction.bind(null, record.id)}
         categories={categories}
