@@ -3,6 +3,10 @@
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { isbnSchema } from "@/lib/isbn";
+import { isDemoAccount } from "@/lib/demo";
+import { checkRateLimit } from "@/lib/rate-limit";
+
+const ISBN_LOOKUP_RATE_LIMIT = { windowMs: 60 * 60 * 1000, max: 30 };
 
 const openBdSummarySchema = z.object({
   title: z.string(),
@@ -24,6 +28,18 @@ export async function lookupIsbnAction(rawIsbn: string): Promise<IsbnLookupResul
   const session = await auth();
   if (!session?.user?.id) {
     return { data: null, error: "ログインが必要です" };
+  }
+  if (isDemoAccount(session.user.email)) {
+    return { data: null, error: "デモアカウントでは書籍情報の取得はできません" };
+  }
+
+  const { limited } = await checkRateLimit(
+    session.user.id,
+    "isbn-lookup",
+    ISBN_LOOKUP_RATE_LIMIT,
+  );
+  if (limited) {
+    return { data: null, error: "検索回数が多すぎます。しばらく時間をおいて再度お試しください" };
   }
 
   const parsedIsbn = isbnSchema.safeParse(rawIsbn);

@@ -9,6 +9,8 @@ import { DEMO_ACCOUNT_MESSAGE, isDemoAccount } from "@/lib/demo";
 
 type ActionState = { error: string | null };
 
+const MAX_RECORDS_PER_USER = 500;
+
 function parseTagNames(raw: string | undefined) {
   if (!raw) return [];
   return [
@@ -73,6 +75,11 @@ export async function createRecordAction(
   }
   if (isDemoAccount(session.user.email)) {
     return { error: DEMO_ACCOUNT_MESSAGE };
+  }
+
+  const recordCount = await db.record.count({ where: { userId: session.user.id } });
+  if (recordCount >= MAX_RECORDS_PER_USER) {
+    return { error: `記録は${MAX_RECORDS_PER_USER}件まで登録できます` };
   }
 
   const parsed = extractInput(formData);
