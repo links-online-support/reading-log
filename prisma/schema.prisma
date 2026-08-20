@@ -83,3 +83,12 @@ model RecordTag {
   @@id([recordId, tagId])
   @@map("record_tags")
 }
+
+model RegistrationAttempt {
+  id        String   @id @default(cuid())
+  ip        String
+  createdAt DateTime @default(now())
+
+  @@index([ip, createdAt])
+  @@map("registration_attempts")
+}
