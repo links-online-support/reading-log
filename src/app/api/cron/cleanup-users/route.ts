@@ -4,7 +4,7 @@ import { env } from "@/lib/env";
 import { DEMO_ACCOUNT_EMAIL } from "@/lib/demo";
 
 const USER_RETENTION_MS = 3 * 24 * 60 * 60 * 1000;
-const REGISTRATION_ATTEMPT_RETENTION_MS = 24 * 60 * 60 * 1000;
+const RATE_LIMIT_HIT_RETENTION_MS = 24 * 60 * 60 * 1000;
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -19,11 +19,11 @@ export async function GET(request: Request) {
     },
   });
 
-  const { count: deletedAttempts } = await db.registrationAttempt.deleteMany({
+  const { count: deletedRateLimitHits } = await db.rateLimitHit.deleteMany({
     where: {
-      createdAt: { lt: new Date(Date.now() - REGISTRATION_ATTEMPT_RETENTION_MS) },
+      createdAt: { lt: new Date(Date.now() - RATE_LIMIT_HIT_RETENTION_MS) },
     },
   });
 
-  return NextResponse.json({ deletedUsers, deletedAttempts });
+  return NextResponse.json({ deletedUsers, deletedRateLimitHits });
 }

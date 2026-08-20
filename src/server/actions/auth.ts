@@ -6,13 +6,12 @@ import { AuthError } from "next-auth";
 import { db } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import { registerSchema, loginSchema } from "@/lib/validations/auth";
-import {
-  getClientIp,
-  isRegistrationRateLimited,
-  recordRegistrationAttempt,
-} from "@/lib/registration-guard";
+import { getClientIp, checkRateLimit } from "@/lib/rate-limit";
 
 type ActionState = { error: string | null };
+
+const REGISTER_RATE_LIMIT = { windowMs: 60 * 60 * 1000, max: 5 };
+const LOGIN_RATE_LIMIT = { windowMs: 15 * 60 * 1000, max: 10 };
 
 export async function registerAction(
   _prevState: ActionState,
@@ -35,10 +34,10 @@ export async function registerAction(
   }
 
   const ip = await getClientIp();
-  if (await isRegistrationRateLimited(ip)) {
+  const { limited } = await checkRateLimit(ip, "register", REGISTER_RATE_LIMIT);
+  if (limited) {
     return { error: "登録試行が多すぎます。しばらく時間をおいて再度お試しください" };
   }
-  await recordRegistrationAttempt(ip);
 
   const existingUser = await db.user.findUnique({
     where: { email: parsed.data.email },
@@ -87,6 +86,12 @@ export async function loginAction(
 
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
+  }
+
+  const ip = await getClientIp();
+  const { limited } = await checkRateLimit(ip, "login", LOGIN_RATE_LIMIT);
+  if (limited) {
+    return { error: "ログイン試行が多すぎます。しばらく時間をおいて再度お試しください" };
   }
 
   try {
