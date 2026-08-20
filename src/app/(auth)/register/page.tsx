@@ -31,6 +31,14 @@ export default function RegisterPage() {
         </CardHeader>
         <form action={formAction}>
           <CardContent className="flex flex-col gap-4">
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="absolute h-0 w-0 overflow-hidden opacity-0"
+            />
             <div className="flex flex-col gap-2">
               <Label htmlFor="name">名前</Label>
               <Input id="name" name="name" type="text" required />
