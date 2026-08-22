@@ -12,9 +12,13 @@ type BarcodeDetectorLike = {
   detect: (source: HTMLVideoElement) => Promise<{ rawValue: string }[]>;
 };
 
+type BarcodeDetectorCtor = new (options: { formats: string[] }) => BarcodeDetectorLike;
+
 declare global {
   interface Window {
-    BarcodeDetector?: new (options: { formats: string[] }) => BarcodeDetectorLike;
+    BarcodeDetector?: BarcodeDetectorCtor & {
+      getSupportedFormats: () => Promise<string[]>;
+    };
   }
 }
 
@@ -31,7 +35,17 @@ export function IsbnLookup({
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
-    setCameraSupported(typeof window !== "undefined" && "BarcodeDetector" in window);
+    // BarcodeDetector自体はあってもEAN-13に対応しているとは限らない端末があるため、
+    // 対応フォーマットを実際に確認してからボタンを表示する。
+    const ctor = typeof window !== "undefined" ? window.BarcodeDetector : undefined;
+    if (!ctor) {
+      setCameraSupported(false);
+      return;
+    }
+    ctor
+      .getSupportedFormats()
+      .then((formats) => setCameraSupported(formats.includes("ean_13")))
+      .catch(() => setCameraSupported(false));
   }, []);
 
   useEffect(() => {
@@ -60,12 +74,24 @@ export function IsbnLookup({
 
   const startScan = async () => {
     const BarcodeDetectorCtor = window.BarcodeDetector;
-    if (!BarcodeDetectorCtor) return;
+    if (!BarcodeDetectorCtor || !navigator.mediaDevices?.getUserMedia) {
+      toast.error("お使いのブラウザはカメラでの読み取りに対応していません");
+      return;
+    }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
+      let stream: MediaStream;
+      try {
+        // 背面カメラを希望値として要求する。exact指定にすると、背面カメラを
+        // 複数搭載した一部のAndroid端末で列挙に失敗し起動できないことがあるため、
+        // ideal指定に留める。
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } },
+        });
+      } catch {
+        // facingMode指定自体が原因で失敗する端末向けに、指定なしで再試行する。
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
       streamRef.current = stream;
       setIsScanning(true);
       if (videoRef.current) {
@@ -92,8 +118,14 @@ export function IsbnLookup({
         if (streamRef.current) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
-    } catch {
-      toast.error("カメラを起動できませんでした");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "NotAllowedError") {
+        toast.error("カメラの使用が許可されませんでした。ブラウザの設定を確認してください");
+      } else if (error instanceof DOMException && error.name === "NotFoundError") {
+        toast.error("カメラが見つかりませんでした");
+      } else {
+        toast.error("カメラを起動できませんでした");
+      }
       setIsScanning(false);
     }
   };
