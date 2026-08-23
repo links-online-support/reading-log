@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { lookupIsbnAction } from "@/server/actions/isbn";
+import { cn } from "@/lib/utils";
 
 type BarcodeDetectorLike = {
   detect: (source: HTMLVideoElement) => Promise<{ rawValue: string }[]>;
@@ -69,6 +70,9 @@ export function IsbnLookup({
   const stopScan = () => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
     setIsScanning(false);
   };
 
@@ -161,14 +165,12 @@ export function IsbnLookup({
           </Button>
         )}
       </div>
-      {isScanning && (
-        <video
-          ref={videoRef}
-          className="w-full max-w-xs rounded-md"
-          muted
-          playsInline
-        />
-      )}
+      <video
+        ref={videoRef}
+        className={cn("w-full max-w-xs rounded-md", !isScanning && "hidden")}
+        muted
+        playsInline
+      />
     </div>
   );
 }
