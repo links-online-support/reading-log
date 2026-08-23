@@ -109,8 +109,12 @@ export function IsbnLookup({
         if (!streamRef.current || !videoRef.current) return;
         try {
           const barcodes = await detector.detect(videoRef.current);
-          if (barcodes.length > 0) {
-            const value = barcodes[0].rawValue;
+          // 本の裏表紙にはISBN（978/979で始まる）と、価格・分類情報を表す
+          // 書籍JANコード（192で始まる）の2つのEAN-13バーコードが並んでいるため、
+          // ISBNの接頭辞と一致するものだけを採用する。
+          const isbnBarcode = barcodes.find((barcode) => /^97[89]\d{10}$/.test(barcode.rawValue));
+          if (isbnBarcode) {
+            const value = isbnBarcode.rawValue;
             setIsbn(value);
             stopScan();
             runLookup(value);
