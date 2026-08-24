@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Info, LogOut } from "lucide-react";
+import { Info, LogOut, Plus } from "lucide-react";
 import { auth, signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -16,13 +16,21 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b">
+      <header className="sticky top-0 z-40 border-b bg-background">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-2 px-4 py-4">
           <nav className="flex items-center gap-2 sm:gap-3">
             <Link href="/dashboard" className="mr-1 font-semibold max-sm:hidden">
               読書ログ
             </Link>
             <NavLinks />
+            <Button
+              size="sm"
+              className="max-sm:hidden"
+              render={<Link href="/records/new" />}
+            >
+              <Plus className="size-4" />
+              新しい記録
+            </Button>
           </nav>
           <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
