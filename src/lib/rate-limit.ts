@@ -16,7 +16,8 @@ type RateLimitOptions = {
 };
 
 // keyとkindの組み合わせで直近windowMs以内のヒット数を数え、上限を超えていなければ
-// 今回のヒットを記録する。呼び出しごとに1回のDBアクセスで判定と記録を両方行う。
+// 今回のヒットを記録する。カウントと記録の間に別リクエストが割り込む競合は
+// あり得るが、上限を多少超える程度に留まるためポートフォリオ用途では許容する。
 export async function checkRateLimit(
   key: string,
   kind: string,
