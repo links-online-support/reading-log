@@ -2,6 +2,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { getRecords } from "@/server/queries/records";
 import { getCategories } from "@/server/queries/categories";
+import { AddRecordFab } from "@/components/features/add-record-fab";
 import { RecordFilters } from "@/components/features/record-filters";
 import { RecordTable } from "@/components/features/record-table";
 
@@ -45,6 +46,7 @@ export default async function RecordsPage({
 
       <RecordFilters categories={categories} />
       <RecordTable records={records} />
+      <AddRecordFab />
     </div>
   );
 }

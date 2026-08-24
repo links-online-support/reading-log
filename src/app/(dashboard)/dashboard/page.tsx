@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Library, Plus, type LucideIcon } from "lucide-react";
+import { Library, type LucideIcon } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getDashboardStats } from "@/server/queries/records";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AddRecordFab } from "@/components/features/add-record-fab";
 import { CategoryBreakdownChart } from "@/components/features/category-breakdown-chart";
 import { MonthlyActivityChart } from "@/components/features/monthly-activity-chart";
 import { RatingStars } from "@/components/features/rating-stars";
@@ -142,13 +143,7 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
 
-      <Link
-        href="/records/new"
-        aria-label="新しい記録を追加"
-        className="fixed right-4 bottom-4 z-50 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 sm:hidden"
-      >
-        <Plus className="size-6" />
-      </Link>
+      <AddRecordFab />
     </div>
   );
 }
