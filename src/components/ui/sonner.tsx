@@ -39,6 +39,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast: "cn-toast",
+          // 警告トーストは既定のポップオーバー色だと他のトーストと区別が
+          // つかないため、アンバー系で塗り分けて目立たせる。
+          warning:
+            "!bg-amber-50 !text-amber-800 !border-amber-300 dark:!bg-amber-950 dark:!text-amber-200 dark:!border-amber-800",
         },
       }}
       {...props}
