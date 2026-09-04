@@ -26,7 +26,7 @@ declare global {
 export function IsbnLookup({
   onResult,
 }: {
-  onResult: (data: { title: string; author: string | null }) => void;
+  onResult: (data: { title: string; author: string | null; isbn: string }) => void;
 }) {
   const [isbn, setIsbn] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -64,6 +64,9 @@ export function IsbnLookup({
       }
       onResult(result.data);
       toast.success("書籍情報を取得しました");
+      if (result.data.duplicateTitle) {
+        toast.warning(`「${result.data.duplicateTitle}」は既に登録されています`);
+      }
     });
   };
 

@@ -54,6 +54,7 @@ model Record {
   id          String       @id @default(cuid())
   title       String
   author      String?
+  isbn        String?
   status      RecordStatus @default(NOT_STARTED)
   rating      Int?
   currentPage Int?
@@ -71,6 +72,7 @@ model Record {
   tags       RecordTag[]
 
   @@index([userId, status])
+  @@index([userId, isbn])
   @@map("records")
 }
 

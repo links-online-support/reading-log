@@ -48,14 +48,17 @@ export function RecordForm({
   });
   const titleRef = useRef<HTMLInputElement>(null);
   const authorRef = useRef<HTMLInputElement>(null);
+  const isbnRef = useRef<HTMLInputElement>(null);
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
+      <input type="hidden" name="isbn" defaultValue={record?.isbn ?? ""} ref={isbnRef} />
       {!record && (
         <IsbnLookup
-          onResult={({ title, author }) => {
+          onResult={({ title, author, isbn }) => {
             if (titleRef.current) titleRef.current.value = title;
             if (author && authorRef.current) authorRef.current.value = author;
+            if (isbnRef.current) isbnRef.current.value = isbn;
           }}
         />
       )}

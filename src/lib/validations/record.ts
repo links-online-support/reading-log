@@ -5,6 +5,7 @@ export const recordSchema = z
   .object({
     title: z.string().min(1, "タイトルを入力してください").max(200),
     author: z.string().max(200).optional().or(z.literal("")),
+    isbn: z.string().max(20).optional().or(z.literal("")),
     status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"]),
     categoryId: z.string().optional().or(z.literal("")),
     rating: z.coerce.number().int().min(1).max(5).optional().or(z.literal("")),
