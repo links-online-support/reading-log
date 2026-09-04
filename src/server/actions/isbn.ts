@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { isbnSchema } from "@/lib/isbn";
 import { isDemoAccount } from "@/lib/demo";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -20,7 +21,12 @@ const openBdItemSchema = z
   .nullable();
 
 type IsbnLookupResult = {
-  data: { title: string; author: string | null } | null;
+  data: {
+    title: string;
+    author: string | null;
+    isbn: string;
+    duplicateTitle: string | null;
+  } | null;
   error: string | null;
 };
 
@@ -68,10 +74,25 @@ export async function lookupIsbnAction(rawIsbn: string): Promise<IsbnLookupResul
     return { data: null, error: "該当する書籍が見つかりませんでした" };
   }
 
+  // ISBNが一致する記録に加え、ISBNなしで手入力された同じ本の記録も
+  // 拾えるようタイトル一致（大文字小文字区別なし）でも重複を判定する。
+  const duplicate = await db.record.findFirst({
+    where: {
+      userId: session.user.id,
+      OR: [
+        { isbn: parsedIsbn.data },
+        { title: { equals: item.summary.title, mode: "insensitive" } },
+      ],
+    },
+    select: { title: true },
+  });
+
   return {
     data: {
       title: item.summary.title,
       author: item.summary.author ?? null,
+      isbn: parsedIsbn.data,
+      duplicateTitle: duplicate?.title ?? null,
     },
     error: null,
   };
