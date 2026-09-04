@@ -40,6 +40,7 @@ function extractInput(formData: FormData) {
   return recordSchema.safeParse({
     title: formData.get("title"),
     author: formData.get("author"),
+    isbn: formData.get("isbn"),
     status: formData.get("status"),
     categoryId: formData.get("categoryId"),
     rating: formData.get("rating") || undefined,
@@ -90,6 +91,7 @@ export async function createRecordAction(
   const {
     tags,
     categoryId,
+    isbn,
     rating,
     currentPage,
     totalPages,
@@ -107,6 +109,7 @@ export async function createRecordAction(
       ...rest,
       userId: session.user.id,
       categoryId: categoryId || null,
+      isbn: isbn || null,
       rating: toNullableInt(rating),
       currentPage: toNullableInt(currentPage),
       totalPages: toNullableInt(totalPages),
@@ -150,6 +153,7 @@ export async function updateRecordAction(
   const {
     tags,
     categoryId,
+    isbn,
     rating,
     currentPage,
     totalPages,
@@ -167,6 +171,7 @@ export async function updateRecordAction(
     data: {
       ...rest,
       categoryId: categoryId || null,
+      isbn: isbn || null,
       rating: toNullableInt(rating),
       currentPage: toNullableInt(currentPage),
       totalPages: toNullableInt(totalPages),

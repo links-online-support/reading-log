@@ -14,6 +14,7 @@ function buildRecord(
     id: "record-1",
     title: "リーダブルコード",
     author: "Dustin Boswell",
+    isbn: null,
     status: "COMPLETED",
     rating: 5,
     currentPage: null,
